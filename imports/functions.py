@@ -10,11 +10,12 @@ warnings.filterwarnings("ignore")
 
 
 # sklearn imports
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_validate
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_validate, cross_val_score
 from sklearn.metrics import (accuracy_score, f1_score, recall_score, roc_curve, auc, confusion_matrix,
-                             classification_report, mean_squared_error, precision_score, plot_confusion_matrix)
+                             classification_report, mean_squared_error, precision_score, ConfusionMatrixDisplay)
 from xgboost import XGBClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
@@ -188,35 +189,15 @@ def calc_scores(y_train, y_pred_train, y_test, y_pred_test):
 
 
 # function to plot confusion matrix
-def plot_cf(model, x_train_data, y_train_data, x_test_data, y_test_data):
-    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 6))
-    
-    plot_confusion_matrix(model, x_train_data, y_train_data,  ax=ax1,
-                          display_labels=["No Arrest", "Arrest"])
-    ax1.set_title('Training Data', size=20)
-    ax1.set_xlabel('Predicted outcome', size=14)
-    ax1.set_ylabel('Original outcome', size=14)
-    ax1.grid(False) 
-    
-    plot_confusion_matrix(model, x_test_data, y_test_data, ax=ax2,
-                          display_labels=["No Arrest", "Arrest"])
-    ax2.set_title('Testing Data', size=20)
-    ax2.set_xlabel('Predicted outcome', size=14)
-    ax2.set_ylabel('Original outcome', size=14)
-    ax2.grid(False) 
-    
-    plt.subplots_adjust(wspace=0.5)
-    
-    return plt.show()
+
 
 
 
 def roc_auc_plot(X_train, y_train, X_pred, y_pred, logreg):
     y_score = logreg.fit(X_train, y_train).decision_function(X_pred)
     fpr, tpr, thresholds = roc_curve(y_pred, y_score)
-    auc = auc(fpr, tpr)
+    AUC = auc(fpr, tpr)
 
-    print(f'AUC: {auc}')
     plt.figure(figsize=(10, 8))
     lw = 2
     plt.plot(fpr, tpr, color='darkorange',
@@ -231,3 +212,4 @@ def roc_auc_plot(X_train, y_train, X_pred, y_pred, logreg):
     plt.title('ROC Curve')
     plt.legend(loc='lower right')
     plt.show()
+    print(f'AUC: {AUC}')
