@@ -154,7 +154,7 @@ def squad_groups(incident):
     for group, keywords in squad_group.items():
         if any(keyword in incident for keyword in keywords):
             return group
-    return 'UNKOWN'
+    return 'UNKNOWN'
 
 
 
@@ -189,19 +189,49 @@ def calc_scores(y_train, y_pred_train, y_test, y_pred_test):
 
 
 # function to plot confusion matrix
+def plot_cm(y_train, y_pred_train, y_test, y_pred_test):
+    '''
+    y_train: True target values of the training set.
+    y_pred_train: Predicted target values for the training set.
+    y_test: True target values of the test set.
+    y_pred_test: Predicted target values for the test set.
+    '''
+    label_dict = {0: 'No Arrest', 1: 'Arrest'}
+    cf = confusion_matrix(y_train, y_pred_train)
+    cf2 = confusion_matrix(y_test, y_pred_test)
+
+    labels = [label_dict[key] for key in sorted(label_dict.keys())]
+    disp = ConfusionMatrixDisplay(confusion_matrix=cf, display_labels=labels)
+    disp2 = ConfusionMatrixDisplay(confusion_matrix=cf2, display_labels=labels)
+
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 6))
+
+    disp.plot(ax=ax1)
+    ax1.grid(False)
+
+    disp2.plot(ax=ax2)
+    ax2.grid(False)
+    plt.subplots_adjust(wspace=0.7)
+
+    plt.show()
 
 
-
-
-def roc_auc_plot(X_train, y_train, X_pred, y_pred, logreg):
-    y_score = logreg.fit(X_train, y_train).decision_function(X_pred)
+def plot_roc(X_train, y_train, X_pred, y_pred, model):
+    '''
+    X_train - training set of X
+    y_train - training set of y
+    X_pred - predicted X
+    y_pred - predicted y
+    model - model object with a predict_proba() method
+    '''
+    y_score = model.fit(X_train, y_train).predict_proba(X_pred)[:, 1]
     fpr, tpr, thresholds = roc_curve(y_pred, y_score)
-    AUC = auc(fpr, tpr)
+    roc_auc = auc(fpr, tpr)
 
     plt.figure(figsize=(10, 8))
     lw = 2
     plt.plot(fpr, tpr, color='darkorange',
-         lw=lw, label='ROC curve')
+             lw=lw, label='ROC curve')
     plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
@@ -212,4 +242,4 @@ def roc_auc_plot(X_train, y_train, X_pred, y_pred, logreg):
     plt.title('ROC Curve')
     plt.legend(loc='lower right')
     plt.show()
-    print(f'AUC: {AUC}')
+    print(f'AUC: {roc_auc}')
