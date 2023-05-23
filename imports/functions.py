@@ -1,7 +1,6 @@
 # relevant imports
 import pandas as pd
 import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
 import datetime
 plt.style.use('seaborn')
@@ -10,23 +9,17 @@ warnings.filterwarnings("ignore")
 
 
 # sklearn imports
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_validate, cross_val_score
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_validate, cross_val_score, learning_curve
 from sklearn.metrics import (accuracy_score, f1_score, recall_score, roc_curve, auc, confusion_matrix,
-                             classification_report, mean_squared_error, precision_score, ConfusionMatrixDisplay)
+                             precision_score, ConfusionMatrixDisplay, log_loss)
 from xgboost import XGBClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from imblearn.over_sampling import SMOTE
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, OneHotEncoder, LabelEncoder
-from sklearn.feature_selection import VarianceThreshold, RFE, RFECV
-from sklearn.pipeline import Pipeline, make_pipeline
-from sklearn.compose import make_column_transformer, make_column_selector
-from sklearn.svm import SVC
-
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.pipeline import Pipeline
 
 
 # function to show column details
@@ -41,19 +34,6 @@ def info(dataframe):
                                   'Missing Values': missing, 'Data type': data_type}, ignore_index=True)
     info_df = info_df.sort_values(by='Missing Percentage', ascending=False)
     return info_df
-
-
-# function to replace a value
-def replace(dataframe, column, og_value, rep_value):
-  '''
-  dataframe - dataframe name
-  column - column name
-  og_value - value to be replaced
-  rep_value - replacing value '''
-
-  dataframe[column].replace(to_replace=og_value, value=rep_value, inplace=True)
-
-  return dataframe[column].value_counts()
 
 
 # function for dropping columns
@@ -208,9 +188,11 @@ def plot_cm(y_train, y_pred_train, y_test, y_pred_test):
 
     disp.plot(ax=ax1)
     ax1.grid(False)
+    ax1.set_title('Training Data', size=20)
 
     disp2.plot(ax=ax2)
     ax2.grid(False)
+    ax2.set_title('Testing Data', size=20)
     plt.subplots_adjust(wspace=0.7)
 
     plt.show()
@@ -229,10 +211,9 @@ def plot_roc(X_train, y_train, X_pred, y_pred, model):
     roc_auc = auc(fpr, tpr)
 
     plt.figure(figsize=(10, 8))
-    lw = 2
     plt.plot(fpr, tpr, color='darkorange',
-             lw=lw, label='ROC curve')
-    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+             label='ROC curve')
+    plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
     plt.yticks([i/10.0 for i in range(11)])
@@ -242,4 +223,4 @@ def plot_roc(X_train, y_train, X_pred, y_pred, model):
     plt.title('ROC Curve')
     plt.legend(loc='lower right')
     plt.show()
-    print(f'AUC: {roc_auc}')
+    print(f'AUC: {roc_auc:.4f}')
