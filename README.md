@@ -86,8 +86,8 @@ See the full analysis in the [Jupyter Notebook](./terry_stops.ipynb) or review t
 ├── data
 ├── images
 ├── imports
+├── README.md
 ├── notebook.pdf
 ├── presentation.pdf
-├── README.md
 └── terry_stops.ipynb
 ```
