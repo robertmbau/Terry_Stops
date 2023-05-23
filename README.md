@@ -72,7 +72,7 @@ The final model was able to predict with a high accuracy. The model's metrics we
 * Use multiclass prediction for the target. Example: There are multiple types of resolutions are possible instead of grouping to Arrest or No Arrest.
 
 ## Disclaimer
-The models provided are intended for learning purposes only. It is important to note that the predictions made by the models may incoporate human bias thus should not be used for any other purposes apart from learning or for critical projects. 
+The models provided are intended for learning purposes only. It is important to note that the predictions made by the models may incoporate human bias thus should not be used for any other purposes apart from learning. 
 The performance and accuracy of the models might be influenced by various factors such as grouping of features and their selection.
 
 ## For More Information
